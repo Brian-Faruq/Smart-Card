@@ -3,11 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmartCardController;
 
-// Route untuk Sistem Smart Card (RFID & SIMART)
-Route::get('/smart-card', [SmartCardController::class, 'index'])->name('smart-card.index');
+// 1. Halaman utama (Pilih Jenis Transaksi)
+Route::get('/', [SmartCardController::class, 'landing'])->name('landing');
+
+// 2. Halaman & Proses Login berdasarkan Mode (device / simart)
+Route::get('/login/{type}', [SmartCardController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login/{type}', [SmartCardController::class, 'processLogin'])->name('login.process');
+Route::post('/logout', [SmartCardController::class, 'logout'])->name('logout');
+
+// 3. Halaman Transaksi (Perlu Login/Session)
+Route::get('/transaksi/device', [SmartCardController::class, 'devicePage'])->name('transaksi.device');
+Route::get('/transaksi/simart', [SmartCardController::class, 'simartPage'])->name('transaksi.simart');
+
+// 4. Proses Transaksi
 Route::post('/smart-card/rfid', [SmartCardController::class, 'processRfid'])->name('smart-card.rfid');
 Route::post('/smart-card/barcode', [SmartCardController::class, 'processBarcode'])->name('smart-card.barcode');
-
-Route::get('/', function () {
-    return view('welcome');
-});

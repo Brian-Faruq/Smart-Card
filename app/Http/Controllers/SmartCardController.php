@@ -9,18 +9,72 @@ use App\Models\TransaksiSimart;
 
 class SmartCardController extends Controller
 {
-    // Menampilkan halaman utama simulasi
-    public function index()
+    // Halaman Landing (Pilih Layanan)
+    public function landing()
     {
-        return view('smart-card.index');
+        return view('smart-card.landing');
     }
 
-    // Memproses Tap RFID (untuk Peminjaman Device)
-    public function processRfid(Request $request)
+    // Tampilkan Form Login
+    public function showLoginForm($type)
+    {
+        if (!in_array($type, ['device', 'simart'])) {
+            return redirect()->route('landing');
+        }
+
+        return view('smart-card.login', compact('type'));
+    }
+
+    // Proses Login Dummy
+    public function processLogin(Request $request, $type)
     {
         $request->validate([
-            'rfid_uid' => 'required'
+            'password' => 'required'
         ]);
+
+        // Password dummy untuk masing-masing mode
+        $passwords = [
+            'device' => 'device123',
+            'simart' => 'simart123'
+        ];
+
+        if (isset($passwords[$type]) && $request->password === $passwords[$type]) {
+            session(['auth_mode' => $type]);
+            return redirect()->route('transaksi.' . $type);
+        }
+
+        return back()->with('error', 'Password salah! Silakan coba lagi.');
+    }
+
+    // Logout / Kembali ke Landing
+    public function logout()
+    {
+        session()->forget('auth_mode');
+        return redirect()->route('landing');
+    }
+
+    // Halaman Khusus Peminjaman Device
+    public function devicePage()
+    {
+        if (session('auth_mode') !== 'device') {
+            return redirect()->route('login.form', 'device')->with('error', 'Silakan login terlebih dahulu!');
+        }
+        return view('smart-card.device');
+    }
+
+    // Halaman Khusus Kasir SIMART
+    public function simartPage()
+    {
+        if (session('auth_mode') !== 'simart') {
+            return redirect()->route('login.form', 'simart')->with('error', 'Silakan login terlebih dahulu!');
+        }
+        return view('smart-card.simart');
+    }
+
+    // Memproses Tap RFID
+    public function processRfid(Request $request)
+    {
+        $request->validate(['rfid_uid' => 'required']);
 
         $santri = Santri::where('rfid_uid', $request->rfid_uid)->first();
 
@@ -28,7 +82,6 @@ class SmartCardController extends Controller
             return back()->with('error', 'Kartu RFID tidak dikenali atau belum terdaftar!');
         }
 
-        // Catat log peminjaman device
         PeminjamanDevice::create([
             'santri_id' => $santri->id,
             'status' => 'dipinjam',
@@ -38,7 +91,7 @@ class SmartCardController extends Controller
         return back()->with('success', 'Berhasil! Device dipinjam oleh: ' . $santri->nama . ' (' . $santri->kelas . ')');
     }
 
-    // Memproses Scan Barcode (untuk Kasir SIMART)
+    // Memproses Scan Barcode
     public function processBarcode(Request $request)
     {
         $request->validate([
@@ -52,16 +105,13 @@ class SmartCardController extends Controller
             return back()->with('error', 'Barcode santri tidak valid!');
         }
 
-        // Cek saldo cukup atau tidak
         if ($santri->saldo < $request->total_belanja) {
             return back()->with('error', 'Transaksi gagal! Saldo santri tidak mencukupi.');
         }
 
-        // Kurangi saldo santri
         $santri->saldo -= $request->total_belanja;
         $santri->save();
 
-        // Catat transaksi kantin
         TransaksiSimart::create([
             'santri_id' => $santri->id,
             'total_belanja' => $request->total_belanja,
