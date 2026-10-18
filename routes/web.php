@@ -18,3 +18,10 @@ Route::get('/transaksi/simart', [SmartCardController::class, 'simartPage'])->nam
 // 4. Proses Transaksi
 Route::post('/smart-card/rfid', [SmartCardController::class, 'processRfid'])->name('smart-card.rfid');
 Route::post('/smart-card/barcode', [SmartCardController::class, 'processBarcode'])->name('smart-card.barcode');
+
+// Route Pendaftaran Device & SIMART
+Route::get('/transaksi/device/register', [SmartCardController::class, 'registerDevicePage'])->name('transaksi.device.register');
+Route::post('/transaksi/device/register', [SmartCardController::class, 'storeDevice'])->name('transaksi.device.store');
+
+Route::get('/transaksi/simart/register', [SmartCardController::class, 'registerSimartPage'])->name('transaksi.simart.register');
+Route::post('/transaksi/simart/register', [SmartCardController::class, 'storeSimart'])->name('transaksi.simart.store');

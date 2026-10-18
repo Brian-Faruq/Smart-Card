@@ -10,22 +10,20 @@
     <div class="max-w-xl mx-auto">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-indigo-900">Peminjaman Device (RFID)</h1>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="text-sm bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
-            </form>
+            <div class="flex gap-2">
+                <a href="{{ route('transaksi.device.register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm">Daftar Kartu Baru</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm">Logout</button>
+                </form>
+            </div>
         </div>
 
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
-                {{ session('success') }}
-            </div>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">{{ session('success') }}</div>
         @endif
-
         @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                {{ session('error') }}
-            </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">{{ session('error') }}</div>
         @endif
 
         <div class="bg-white p-6 rounded-2xl shadow-md border">
@@ -37,7 +35,6 @@
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl">Proses Tap RFID</button>
             </form>
-            <p class="text-xs text-gray-500 mt-4">Uji coba UID: <span class="font-mono font-bold">1234567890</span> / <span class="font-mono font-bold">0987654321</span></p>
         </div>
     </div>
 </body>

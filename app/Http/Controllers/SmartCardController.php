@@ -120,4 +120,54 @@ class SmartCardController extends Controller
 
         return back()->with('success', 'Transaksi SIMART berhasil! Sisa saldo ' . $santri->nama . ': Rp ' . number_format($santri->saldo, 0, ',', '.'));
     }
+
+    // Menampilkan halaman registrasi device/rfid
+    public function registerDevicePage()
+    {
+        if (session('auth_mode') !== 'device') {
+            return redirect()->route('login.form', 'device')->with('error', 'Silakan login terlebih dahulu!');
+        }
+        $santris = Santri::all();
+        return view('smart-card.register-device', compact('santris'));
+    }
+
+    // Menyimpan registrasi RFID ke Santri
+    public function storeDevice(Request $request)
+    {
+        $request->validate([
+            'santri_id' => 'required|exists:santris,id',
+            'rfid_uid' => 'required|unique:santris,rfid_uid'
+        ]);
+
+        $santri = Santri::findOrFail($request->santri_id);
+        $santri->rfid_uid = $request->rfid_uid;
+        $santri->save();
+
+        return back()->with('success', 'Berhasil mendaftarkan RFID untuk santri: ' . $santri->nama);
+    }
+
+    // Menampilkan halaman registrasi barcode simart
+    public function registerSimartPage()
+    {
+        if (session('auth_mode') !== 'simart') {
+            return redirect()->route('login.form', 'simart')->with('error', 'Silakan login terlebih dahulu!');
+        }
+        $santris = Santri::all();
+        return view('smart-card.register-simart', compact('santris'));
+    }
+
+    // Menyimpan registrasi Barcode ke Santri
+    public function storeSimart(Request $request)
+    {
+        $request->validate([
+            'santri_id' => 'required|exists:santris,id',
+            'barcode_code' => 'required|unique:santris,barcode_code'
+        ]);
+
+        $santri = Santri::findOrFail($request->santri_id);
+        $santri->barcode_code = $request->barcode_code;
+        $santri->save();
+
+        return back()->with('success', 'Berhasil mendaftarkan Barcode untuk santri: ' . $santri->nama);
+    }
 }
