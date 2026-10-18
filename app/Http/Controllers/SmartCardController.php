@@ -71,10 +71,11 @@ class SmartCardController extends Controller
         return view('smart-card.simart');
     }
 
-    // Memproses Tap RFID
     public function processRfid(Request $request)
     {
-        $request->validate(['rfid_uid' => 'required']);
+        $request->validate([
+            'rfid_uid' => 'required'
+        ]);
 
         $santri = Santri::where('rfid_uid', $request->rfid_uid)->first();
 
@@ -82,13 +83,30 @@ class SmartCardController extends Controller
             return back()->with('error', 'Kartu RFID tidak dikenali atau belum terdaftar!');
         }
 
-        PeminjamanDevice::create([
-            'santri_id' => $santri->id,
-            'status' => 'dipinjam',
-            'waktu_ambil' => now(),
-        ]);
+        // Cari apakah santri ini punya transaksi peminjaman yang BELUM dikembalikan (waktu_kembali masih NULL)
+        $peminjamanAktif = PeminjamanDevice::where('santri_id', $santri->id)
+            ->whereNull('waktu_kembali')
+            ->first();
 
-        return back()->with('success', 'Berhasil! Device dipinjam oleh: ' . $santri->nama . ' (' . $santri->kelas . ')');
+        if ($peminjamanAktif) {
+            // JIKA ADA: Update baris yang sama untuk mencatat waktu kembali
+            $peminjamanAktif->update([
+                'status' => 'dikembalikan',
+                'waktu_kembali' => now(),
+            ]);
+
+            return back()->with('success', 'Berhasil! Device telah DIKEMBALIKAN oleh: ' . $santri->nama);
+        } else {
+            // JIKA TIDAK ADA: Baru buat baris baru untuk peminjaman
+            PeminjamanDevice::create([
+                'santri_id' => $santri->id,
+                'status' => 'dipinjam',
+                'waktu_ambil' => now(),
+                'waktu_kembali' => null,
+            ]);
+
+            return back()->with('success', 'Berhasil! Device DIPINJAM oleh: ' . $santri->nama);
+        }
     }
 
     // Memproses Scan Barcode
