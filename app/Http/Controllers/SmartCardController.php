@@ -188,4 +188,26 @@ class SmartCardController extends Controller
 
         return back()->with('success', 'Berhasil mendaftarkan Barcode untuk santri: ' . $santri->nama);
     }
+
+    // Menampilkan Halaman Riwayat Device
+    public function historyDevicePage()
+    {
+        if (session('auth_mode') !== 'device') {
+            return redirect()->route('login.form', 'device')->with('error', 'Silakan login terlebih dahulu!');
+        }
+
+        $riwayats = PeminjamanDevice::with('santri')->latest()->get();
+        return view('smart-card.history-device', compact('riwayats'));
+    }
+
+    // Menampilkan Halaman Riwayat SIMART
+    public function historySimartPage()
+    {
+        if (session('auth_mode') !== 'simart') {
+            return redirect()->route('login.form', 'simart')->with('error', 'Silakan login terlebih dahulu!');
+        }
+
+        $riwayats = TransaksiSimart::with('santri')->latest()->get();
+        return view('smart-card.history-simart', compact('riwayats'));
+    }
 }

@@ -11,6 +11,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-green-900">Kasir SIMART (Kantin)</h1>
             <div class="flex gap-2">
+                <a href="{{ route('transaksi.simart.history') }}" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg text-sm">Riwayat Log</a>
                 <a href="{{ route('transaksi.simart.register') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm">Daftar Barcode Baru</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

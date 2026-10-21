@@ -11,6 +11,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-indigo-900">Peminjaman & Pengembalian Device (RFID)</h1>
             <div class="flex gap-2">
+                <a href="{{ route('transaksi.device.history') }}" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg text-sm">Riwayat Log</a>
                 <a href="{{ route('transaksi.device.register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm">Daftar Kartu Baru</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
