@@ -18,7 +18,7 @@ class SmartCardController extends Controller
     // Tampilkan Form Login
     public function showLoginForm($type)
     {
-        if (!in_array($type, ['device', 'simart'])) {
+        if (!in_array($type, ['device', 'simart', 'admin'])) {
             return redirect()->route('landing');
         }
 
@@ -32,14 +32,19 @@ class SmartCardController extends Controller
             'password' => 'required'
         ]);
 
-        // Password dummy untuk masing-masing mode
+        // Password dummy untuk masing-masing mode termasuk admin
         $passwords = [
             'device' => 'device123',
-            'simart' => 'simart123'
+            'simart' => 'simart123',
+            'admin' => 'admin123'
         ];
 
         if (isset($passwords[$type]) && $request->password === $passwords[$type]) {
             session(['auth_mode' => $type]);
+
+            if ($type === 'admin') {
+                return redirect()->route('admin.santri');
+            }
             return redirect()->route('transaksi.' . $type);
         }
 
@@ -209,5 +214,16 @@ class SmartCardController extends Controller
 
         $riwayats = TransaksiSimart::with('santri')->latest()->get();
         return view('smart-card.history-simart', compact('riwayats'));
+    }
+
+    // Halaman Dashboard Data Admin (Master Santri)
+    public function adminDashboard()
+    {
+        if (session('auth_mode') !== 'admin') {
+            return redirect()->route('login.form', 'admin')->with('error', 'Silakan login terlebih dahulu!');
+        }
+
+        $santris = Santri::all();
+        return view('smart-card.admin-santri', compact('santris'));
     }
 }

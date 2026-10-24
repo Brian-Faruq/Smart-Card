@@ -29,3 +29,6 @@ Route::post('/transaksi/simart/register', [SmartCardController::class, 'storeSim
 // Route Riwayat Log Transaksi
 Route::get('/transaksi/device/history', [SmartCardController::class, 'historyDevicePage'])->name('transaksi.device.history');
 Route::get('/transaksi/simart/history', [SmartCardController::class, 'historySimartPage'])->name('transaksi.simart.history');
+
+// Route Data Admin
+Route::get('/admin/santri', [SmartCardController::class, 'adminDashboard'])->name('admin.santri');

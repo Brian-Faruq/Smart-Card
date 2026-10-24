@@ -19,21 +19,28 @@
             </div>
         @endif
 
+        @php
+            $btnColor = $type === 'device' ? 'bg-indigo-600 hover:bg-indigo-700' : ($type === 'simart' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700');
+            $ringColor = $type === 'device' ? 'focus:ring-indigo-400' : ($type === 'simart' ? 'focus:ring-green-400' : 'focus:ring-blue-400');
+        @endphp
+
         <form action="{{ route('login.process', $type) }}" method="POST">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Password Petugas:</label>
-                <input type="password" name="password" placeholder="Masukkan password..." class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400" autofocus required>
+                <input type="password" name="password" placeholder="Masukkan password..." class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 {{ $ringColor }}" autofocus required>
             </div>
 
-            <button type="submit" class="w-full py-3 px-4 rounded-xl font-bold text-white transition duration-200 {{ $type === 'device' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-green-600 hover:bg-green-700' }}">
+            <button type="submit" class="w-full py-3 px-4 rounded-xl font-bold text-white transition duration-200 {{ $btnColor }}">
                 Masuk ke Mode {{ strtoupper($type) }}
             </button>
         </form>
 
-        <p class="text-xs text-gray-400 mt-6 text-center">
+        <p class="text-xs text-gray-400 mt-6 text-center leading-relaxed">
             * Password dummy: <br>
-            Device: <span class="font-mono font-bold text-gray-600">device123</span> | SIMART: <span class="font-mono font-bold text-gray-600">simart123</span>
+            Device: <span class="font-mono font-bold text-gray-600">device123</span> | 
+            SIMART: <span class="font-mono font-bold text-gray-600">simart123</span> | 
+            Admin: <span class="font-mono font-bold text-gray-600">admin123</span>
         </p>
     </div>
 </body>
