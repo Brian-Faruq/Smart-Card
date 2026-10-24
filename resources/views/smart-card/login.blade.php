@@ -11,7 +11,7 @@
         <a href="{{ route('landing') }}" class="text-sm text-indigo-600 hover:underline mb-4 inline-block">&larr; Kembali ke Pilihan</a>
         
         <h2 class="text-2xl font-bold mb-2 text-gray-800">Login Operasional {{ strtoupper($type) }}</h2>
-        <p class="text-sm text-gray-500 mb-6">Masukkan password petugas untuk melanjutkan.</p>
+        <p class="text-sm text-gray-500 mb-6">Masukkan password petugas untuk melanjutkan login.</p>
 
         @if(session('error'))
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
